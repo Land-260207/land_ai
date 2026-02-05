@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import os
 from dotenv import load_dotenv
 from schema.ChangeValue import ChangeValueRequest, ChangeValueResponse
+from util.changevalue import inflation
 
 load_dotenv()
 app = FastAPI(docs_url='/api', redoc_url='/api/redoc', openapi_url='/openapi.json')
