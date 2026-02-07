@@ -12,7 +12,7 @@ import os
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
-def inflation():
+def sync_inflation():
     res = client.models.generate_content(
         model = 'gemini-2.5-flash',
         contents = ''
