@@ -1,33 +1,18 @@
+from fastapi import FastAPI
 import os
-from google import genai
 from dotenv import load_dotenv
 load_dotenv()
 
-client = genai.Client(api_key = os.getenv("GEMINI_API_KEY"))
+from schema.changevalueSchema import ChangeValueRequest, ChangeValueResponse
+from util.changevalue import sync_inflation
+app = FastAPI(docs_url='/api', redoc_url='/api/redoc', openapi_url='/openapi.json')
 
-response = client.models.generate_content(
-    model = 'gemini-2.5-flash',
-    contents = 'hello'
-)
-print(response.text)
+@app.get('/health')
+def Health():
+    return {'status': 'ok good best'}
 
-from google import genai
-from google.genai import types
-
-client = genai.Client()
-
-grounding_tool = types.Tool(
-    google_search=types.GoogleSearch()
-)
-
-config = types.GenerateContentConfig(
-    tools=[grounding_tool]
-)
-
-response = client.models.generate_content(
-    model="gemini-3-flash-preview",
-    contents="Who won the euro 2024?",
-    config=config,
-)
-
-print(response.text)
+import asyncio
+@app.post('/value', response_model=ChangeValueResponse)
+async def change_value(req: ChangeValueRequest):
+    result = await asyncio.to_thread(sync_inflation, req.region)
+    return result
