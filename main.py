@@ -15,4 +15,5 @@ def Health():
 
 @app.post('/value', response_model = ChangeValueResponse)
 async def change_value(req: ChangeValueRequest):
-    pass
+    result = sync_inflation()
+    return result
