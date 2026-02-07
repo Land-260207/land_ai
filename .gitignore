@@ -3,3 +3,5 @@
 uv.lock
 __pycache__
 land.json
+schema/__pycache__
+*.pyc
