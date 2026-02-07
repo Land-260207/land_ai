@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class ChangeValueRequest(BaseModel):
-    curValue: float
+    region: str
 
 class ChangeValueResponse(BaseModel):
-    value: float
+    delta_pp: float
