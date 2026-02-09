@@ -7,8 +7,10 @@ def getPrompt(region: str, n: int = 8, days: int = 30):
     현재 땅값에 적용할 변동폭(delta_pp, %p)을 판단하라.
 
     규칙:
-    - delta_pp는 숫자만 출력 (-3.0 ~ +3.0 범위)
-    - 근거로 사용한 뉴스 제목을 news_titles 배열에 포함
-    - 출력은 JSON만
+    - delta_pp는 숫자만 출력 (최소 ±3.0)
+    - 다른 출력 없이 무조건 delta_pp만 출력
+    - float 자료형으로 바로 변환하기 편하게 숫자만 출력
+
+    결과, 근거 다 필요없고 무조건 delta_pp만 출력해
     """
     return prompt

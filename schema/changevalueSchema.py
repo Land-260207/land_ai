@@ -4,4 +4,4 @@ class ChangeValueRequest(BaseModel):
     region: str
 
 class ChangeValueResponse(BaseModel):
-    delta_pp: float
+    value: float

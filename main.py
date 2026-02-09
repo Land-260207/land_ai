@@ -12,7 +12,14 @@ def Health():
     return {'status': 'ok good best'}
 
 import asyncio
+from fastapi import HTTPException
 @app.post('/value', response_model=ChangeValueResponse)
 async def change_value(req: ChangeValueRequest):
     result = await asyncio.to_thread(sync_inflation, req.region)
-    return result
+
+    try:
+        return {"value": float(result)} 
+    except Exception as e:
+        raise HTTPException(500, detail=f"Gemini returns None -> {e}")
+    except AttributeError as Attr:
+        raise HTTPException(502, detail=f"Gemini returns None -> {Attr}")

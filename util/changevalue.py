@@ -23,9 +23,7 @@ def sync_inflation(region: str):
     PROMPT = getPrompt(region = lands)
     config = types.GenerateContentConfig(
         tools=[grounding_tool],
-        response_mime_type="application/json",
-        response_schema=SCHEMA,
-        temperature=0.2,
+        temperature=0.1,
     )
     res = client.models.generate_content(
         model="gemini-2.5-flash",
@@ -33,4 +31,4 @@ def sync_inflation(region: str):
         config=config,
     )
 
-    return res.parsed
+    return res.text
