@@ -13,3 +13,19 @@ def newsCrawler(region: str):
         titles.append(title)
     print(*titles)
     return titles[:10]
+
+import requests
+import xml.etree.ElementTree as ET
+
+def accidentNewsCrawler(region: str):
+    URL = f"https://news.google.com/rss/search?q={region}+사건사고&hl=ko&gl=KR&ceid=KR:ko"
+    result = requests.get(URL)
+
+    root = ET.fromstring(result.content)
+
+    titles = []
+    for item in root.findall(".//item"):
+        title = item.find("title").text
+        titles.append(title)
+    print(*titles)
+    return titles[:10]
