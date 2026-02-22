@@ -1,34 +1,30 @@
-# 땅추출
-import json
-with open("util/land.json", "r", encoding='utf-8') as f:
-    data = json.load(f)["data"]
-
-land = [row for row in data if isinstance(row.get('※ 매월 말일자 통계 현황'), str) and row['※ 매월 말일자 통계 현황'].isdigit() and len(row['※ 매월 말일자 통계 현황']) == 10 and row['※ 매월 말일자 통계 현황'].endswith('000000') and not row['※ 매월 말일자 통계 현황'].endswith('00000000')]
-lands = [row["Column2"] for row in land]
-print(len(lands))
-
-# API호출
-from google import genai
-from schema.googleSearchSchema import getSchema
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from util.prompt import getPrompt
-import os
+from util.getNews import newsCrawler
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-3B-Instruct")
+model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-3B-Instruct")
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-SCHEMA = getSchema()
 
-from google.genai import types
-grounding_tool = types.Tool(google_search=types.GoogleSearch())
-
-def sync_inflation(region: str):
-    PROMPT = getPrompt(region = lands)
-    config = types.GenerateContentConfig(
-        tools=[grounding_tool],
-        temperature=0.1,
-    )
-    res = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=PROMPT,
-        config=config,
-    )
-
-    return res.text
+def sync_inflation(region: str, title: str):
+    PROMPT = getPrompt(region, title)
+    print(title)
+    messages = [
+        {"role": "system", "content": PROMPT},
+        {"role": "user", "content": title},
+    ]
+    
+    inputs = tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors="pt",
+    ).to(model.device)
+    
+    outputs = model.generate(**inputs, max_new_tokens=6,
+                             do_sample = False)
+    text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
+    
+    import re
+    gen_text = re.search(r"[-+]?\d+(\.\d+)?", text)
+    return gen_text.group() if gen_text else "0.0"
