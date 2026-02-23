@@ -1,9 +1,10 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from util.prompt import getPrompt, getAccidentPrompt
+import torch
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-3B-Instruct")
 model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-3B-Instruct")
 
-
+@torch.inference_mode()
 def sync_inflation(region: str, title: str):
     PROMPT = getPrompt(region, title)
     print(title)
@@ -28,6 +29,7 @@ def sync_inflation(region: str, title: str):
     gen_text = re.search(r"[-+]?\d+(\.\d+)?", text)
     return gen_text.group() if gen_text else "0.0"
 
+@torch.inference_mode()
 def accident_valuation(region: str, title: str):
     PROMPT = getAccidentPrompt(region, title)
     print(title)
