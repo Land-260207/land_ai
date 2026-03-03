@@ -3,10 +3,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import logging
 from schema.changevalueSchema import ChangeValueRequest, ChangeValueResponse
 from util.changevalue import sync_inflation, accident_valuation
 from util.getNews import newsCrawler, accidentNewsCrawler
 app = FastAPI(docs_url='/api', redoc_url='/api/redoc', openapi_url='/openapi.json')
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 @app.get('/health')
 def Health():
