@@ -5,3 +5,4 @@ __pycache__
 land.json
 schema/__pycache__
 *.pyc
+CLAUDE.md
