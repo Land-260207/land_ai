@@ -1,11 +1,16 @@
 import requests
 import xml.etree.ElementTree as ET
 
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 def newsCrawler(region: str):
     URL = f"https://news.google.com/rss/search?q={region}&hl=ko&gl=KR&ceid=KR:ko"
     result = requests.get(URL)
 
     root = ET.fromstring(result.content)
+    logger.info("xml 완")
 
     titles = []
     for item in root.findall(".//item"):
@@ -22,7 +27,8 @@ def accidentNewsCrawler(region: str):
     result = requests.get(URL)
 
     root = ET.fromstring(result.content)
-
+    logger.info("xml 완")
+    
     titles = []
     for item in root.findall(".//item"):
         title = item.find("title").text
